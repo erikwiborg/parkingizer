@@ -1,0 +1,19 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+repositories {
+    mavenCentral()
+}
+mainClassName = 'parkingizer.Parkingizer'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile "joda-time:joda-time:2.2"
+    compile "com.sparkjava:spark-core:2.5.3"
+    compile "com.google.code.gson:gson:1.7.2"
+    compile "org.slf4j:slf4j-api:1.7.21"
+    compile "org.slf4j:slf4j-simple:1.7.21"
+    testCompile "junit:junit:4.12"
+}

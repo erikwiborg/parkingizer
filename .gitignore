@@ -1,0 +1,10 @@
+# production
+build
+
+# misc
+.DS_Store
+.gradle
+.env
+.idea
+*.iml
+npm-debug.log
