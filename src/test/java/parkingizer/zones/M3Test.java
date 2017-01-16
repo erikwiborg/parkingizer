@@ -2,10 +2,11 @@ package parkingizer.zones;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static parkingizer.zones.M3.PRICE_PER_MINUTE;
+import static parkingizer.zones.M3.PRICE_PER_MINUTE_BUSINESS_HOURS;
 
 /**
  * Created by erik on 13/12/2016.
@@ -13,7 +14,6 @@ import static org.junit.Assert.assertEquals;
 public class M3Test {
 
     @Test
-    @Ignore
     public void shouldBeFreeOnSundays() throws Exception {
         DateTime now = new DateTime().dayOfWeek().setCopy(DateTimeConstants.SUNDAY).hourOfDay().setCopy(5);
         DateTime then = now.plusHours(2);
@@ -29,10 +29,10 @@ public class M3Test {
 
 
     @Test
-    public void shouldBeFreeForLessThanOneHourAndThenCharge2PerMinute() throws Exception {
+    public void shouldBeFreeForTheFirstHourAndThenCharge2PerMinute() throws Exception {
         DateTime now = new DateTime().dayOfWeek().setCopy(DateTimeConstants.THURSDAY).withTime(9, 0, 0, 0);
         DateTime then = now.plusHours(2).plusMinutes(5);
-        assertEquals(2 * 65, new M3().calculate(now, then));
+        assertEquals(PRICE_PER_MINUTE_BUSINESS_HOURS * 65, new M3().calculate(now, then));
     }
 
     @Test
@@ -40,7 +40,7 @@ public class M3Test {
         DateTime now = new DateTime().dayOfWeek().setCopy(DateTimeConstants.THURSDAY).withTime(7, 30, 0, 0);
         DateTime then = now.plusHours(2).plusMinutes(5);
 
-        assertEquals((3 * 30) + (2 * 35), new M3().calculate(now, then));
+        assertEquals((PRICE_PER_MINUTE * 30) + (PRICE_PER_MINUTE_BUSINESS_HOURS * 35), new M3().calculate(now, then));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class M3Test {
         DateTime now = new DateTime().dayOfWeek().setCopy(DateTimeConstants.THURSDAY).withTime(15, 30, 0, 0);
         DateTime then = now.plusHours(2).plusMinutes(5);
 
-        assertEquals((95 * 3), new M3().calculate(now, then));
+        assertEquals((95 * PRICE_PER_MINUTE), new M3().calculate(now, then));
     }
 
 
@@ -57,6 +57,6 @@ public class M3Test {
         DateTime now = new DateTime().dayOfWeek().setCopy(DateTimeConstants.THURSDAY).withTime(7, 30, 0, 0);
         DateTime then = now.plusHours(12).plusMinutes(5);
 
-        assertEquals((30 * 3) + (7 * 60 * 2) + (185 * 3), new M3().calculate(now, then));
+        assertEquals((30 * PRICE_PER_MINUTE) + (7 * 60 * PRICE_PER_MINUTE_BUSINESS_HOURS) + (3 * 60 * PRICE_PER_MINUTE) + (35 * PRICE_PER_MINUTE), new M3().calculate(now, then));
     }
 }

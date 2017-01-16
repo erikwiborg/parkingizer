@@ -2,7 +2,6 @@ package parkingizer.zones;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
-import org.joda.time.Minutes;
 
 
 /**
@@ -13,21 +12,25 @@ import org.joda.time.Minutes;
 
  */
 public class M3 implements Zone {
-    private static final int PRICE_PER_MINUTE_BUSINESS_HOURS = 2;
-    private static final int PRICE_PER_MINUTE = 3;
+    static final int PRICE_PER_MINUTE_BUSINESS_HOURS = 2;
+    static final int PRICE_PER_MINUTE = 3;
+    private static final int MINUTES_FREE_BUSINESS_HOURS = 60;
     @Override
     public int calculate(DateTime start, DateTime end) {
         int result = 0;
-        while(start.isBefore(end)) {
+        int minuteCounter = 0;
+        while(!start.isAfter(end)) {
             //If sunday, free.
             if(start.dayOfWeek().get() != DateTimeConstants.SUNDAY) {
-                if (start.hourOfDay().get() >= 8 && start.hourOfDay().get() < 16) {
-                    result += Minutes.minutesBetween(start, end).getMinutes() <= 60 ? 0 : PRICE_PER_MINUTE_BUSINESS_HOURS;
+                if (start.hourOfDay().get() >= 8 && !start.isAfter(start.withTime(16, 0, 0 ,0))) {
+                    result += minuteCounter <= MINUTES_FREE_BUSINESS_HOURS ? 0 : PRICE_PER_MINUTE_BUSINESS_HOURS;
+                    minuteCounter++;
                 } else {
                     result += PRICE_PER_MINUTE;
                 }
             }
             start = start.plusMinutes(1);
+
         }
         return result;
     }
